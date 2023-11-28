@@ -1,0 +1,29 @@
+[flake8]
+# This is the goal
+#max-line-length = 80
+max-line-length = 120
+max-complexity = 13
+; See https://github.com/PyCQA/flake8-import-order
+import-order-style = smarkets
+application-import-names =
+    tests
+
+exclude =
+    .git
+    __pycache__
+    __init__.py
+
+ignore =
+    ; Formatting is resolved by black
+    E
+    ; https://lintlyci.github.io/Flake8Rules/rules/E402.html
+    E402
+    ; https://lintlyci.github.io/Flake8Rules/rules/W504.html
+    W504
+    ;
+    D203
+    ;
+    W503
+    ; https://www.flake8rules.com/rules/E124.html
+    E124
+    E128
