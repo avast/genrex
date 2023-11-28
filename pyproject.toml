@@ -21,7 +21,7 @@ pytest-mock = "^3.10.0"
 pytest-mypy = "^0.10.3"
 requests-mock = "^1.10.0"
 pytest-pylint = "^0.21.0"
-pylint = "^2.15.5"
+pylint = "^3.0.2"
 types-requests = ">=0.1.8,<3.0.0"
 types-tabulate = ">=0.1.0,<0.9.1"
 
