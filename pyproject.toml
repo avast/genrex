@@ -8,7 +8,7 @@ authors = ["regeciovad <Dominika.Regeciova@gendigital.com>"]
 python = "^3.10"
 
 [tool.poetry.dev-dependencies]
-black = "^23.1.0"
+black = "^23.12.1"
 isort = "^5.13.2"
 mypy = "^1.8.0"
 flake8 = "^6.0.0"
