@@ -1,8 +1,7 @@
 import string
 from enum import IntFlag
-from typing import Dict, List, Optional
 
-hex_lowercase: List[str] = [
+hex_lowercase: list[str] = [
     "0",
     "1",
     "2",
@@ -21,7 +20,7 @@ hex_lowercase: List[str] = [
     "f",
 ]
 
-hex_uppercase: List[str] = [
+hex_uppercase: list[str] = [
     "0",
     "1",
     "2",
@@ -57,7 +56,7 @@ class ClassType(IntFlag):
     GENERAL = 4096
 
 
-class_types_array: Dict[ClassType, List[str]] = {
+class_types_array: dict[ClassType, list[str]] = {
     ClassType.SPACE: ["\\s"],
     ClassType.NUMBERS: list(string.digits),
     ClassType.HEX_LOWER: hex_lowercase,
@@ -76,7 +75,7 @@ class_types_array: Dict[ClassType, List[str]] = {
 }
 
 
-def define_type(repr_string: str) -> Optional[ClassType]:  # noqa: C901
+def define_type(repr_string: str) -> ClassType | None:  # noqa: C901
     if len(repr_string) == 0:
         return None
     elif repr_string.isspace():

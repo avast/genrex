@@ -1,6 +1,4 @@
-from typing import Dict, List, Union
-
-cescapes: List[Union[int, str]] = [
+cescapes: list[int | str] = [
     0,
     0,
     0,
@@ -36,7 +34,7 @@ cescapes: List[Union[int, str]] = [
 ]
 
 
-filter_ngrams: Dict[str, List[str]] = {
+filter_ngrams: dict[str, list[str]] = {
     "url": [
         "click.html",
         "click.php",
@@ -101,5 +99,5 @@ def ready_to_print(string: str) -> str:
     return res
 
 
-def string2ngrams(string: str, ngram_len: int) -> List[str]:
+def string2ngrams(string: str, ngram_len: int) -> list[str]:
     return [string[i : i + ngram_len] for i in range(len(string) - ngram_len + 1)]

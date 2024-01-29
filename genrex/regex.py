@@ -1,7 +1,7 @@
 import collections
 import copy
 import re
-from typing import Dict, Generator, Iterable, List, Optional, Set, Tuple
+from typing import Generator, Iterable
 
 from genrex.classes import (
     Alternation,
@@ -16,8 +16,8 @@ from genrex.clustering import Cluster
 from genrex.enums import NamedObjectStrictType
 from genrex.misc import filter_ngrams
 
-TypeA = Dict[int, Dict[int, Expression]]
-TypeB = Dict[int, Expression]
+TypeA = dict[int, dict[int, Expression]]
+TypeB = dict[int, Expression]
 
 
 def iterate_alternations(
@@ -40,7 +40,7 @@ def iterate_alternations(
 
 
 def iterate_concatenation(
-    regex: Expression, ngram: Optional[Literal] = None
+    regex: Expression, ngram: Literal | None = None
 ) -> Generator[Expression, None, None]:
     """
     Iterate concatenation also split literals into len of 1
@@ -59,7 +59,7 @@ def iterate_concatenation(
     def iterate_literal(
         literal: Literal, ngram: Literal
     ) -> Generator[Literal, None, None]:
-        index: Optional[int] = literal.literal.find(ngram.literal)
+        index: int | None = literal.literal.find(ngram.literal)
         if index is not None and index >= 0:
             prefix = literal.literal[:index]
             suffix = literal.literal[index + len(ngram.literal) :]
@@ -102,7 +102,7 @@ def create_node(expr_a: TypeA) -> int:
     return k
 
 
-def dive(nodes: Iterable[int], expr_a: TypeA) -> List[int]:
+def dive(nodes: Iterable[int], expr_a: TypeA) -> list[int]:
     result = set()
     for node in nodes:
         for sub in expr_a.get(node, {}):
@@ -112,11 +112,11 @@ def dive(nodes: Iterable[int], expr_a: TypeA) -> List[int]:
 
 def find_transition(
     atom: Expression,
-    search: Set[int],
-    ignore: Set[int],
-    passed: Set[int],
+    search: set[int],
+    ignore: set[int],
+    passed: set[int],
     expr_a: TypeA,
-) -> List[Tuple[int, Expression]]:
+) -> list[tuple[int, Expression]]:
     result = []
     for from_node in search:
         if from_node in ignore:
@@ -163,7 +163,7 @@ def to_range(expr: Expression) -> Expression:
     return expr
 
 
-def convert_to_range(expr_a: Expression, expr_b: Expression) -> Optional[Expression]:
+def convert_to_range(expr_a: Expression, expr_b: Expression) -> Expression | None:
     """
     Try to merge expressions into range instead of concatenation
     """
@@ -207,9 +207,9 @@ class State:
 class Trie:
     def __init__(self):
         self.root: State = State()
-        self.nodes: List[State] = []
-        self.ngram_start: Optional[int] = None
-        self.ngram: Optional[Literal] = None
+        self.nodes: list[State] = []
+        self.ngram_start: int | None = None
+        self.ngram: Literal | None = None
 
     def add(self, word: str, start: int = -1, ngram_trie_root=None):
         node = self.root
@@ -306,7 +306,7 @@ class Trie:
             matrix_a = self.minimize_rest(matrix_a, matrix_c, matrix_d)
         return matrix_a, matrix_b
 
-    def minimize_rest(self, matrix_a: dict, matrix_c: dict, matrix_d: List):
+    def minimize_rest(self, matrix_a: dict, matrix_c: dict, matrix_d: list):
         states = []
         i = 0
         while i < len(matrix_d):
@@ -406,7 +406,7 @@ class Trie:
                 expr_a = expr_a.remove(end)
                 expr_b = expr_b.remove(end)
 
-            union_set: Set[Expression] = set()
+            union_set: set[Expression] = set()
             union_set.update(expr_a)
             union_set.update(expr_b)
 
@@ -465,13 +465,13 @@ class Trie:
 
     def add_atom(
         self,
-        nodes: Set[int],
+        nodes: set[int],
         atom: Expression,
-        search: Set[int],
-        ignore: Set[int],
-        passed: Set[int],
+        search: set[int],
+        ignore: set[int],
+        passed: set[int],
         expr_a: TypeA,
-    ) -> Tuple[Set[int], Set[int], Set[int]]:
+    ) -> tuple[set[int], set[int], set[int]]:
         """
         Add one atomic regular expression into `expr_a`
         """
@@ -488,7 +488,7 @@ class Trie:
         # Find all transitions which are from search nodes and use expression which
         # have common alternative with atom
         all_transitions = set(find_transition(atom, search, ignore, passed, expr_a))
-        new: Optional[int] = None
+        new: int | None = None
         for node in nodes:
             # Do not create transition when some transition already exists
             transitions = set(all_transitions)
@@ -517,13 +517,13 @@ class Trie:
     def add_range(
         self,
         expr: Range,
-        nodes: Set[int],
-        search: Set[int],
-        ignore: Set[int],
-        passed: Set[int],
+        nodes: set[int],
+        search: set[int],
+        ignore: set[int],
+        passed: set[int],
         expr_a: TypeA,
         expr_b: TypeB,
-    ) -> Tuple[Set[int], Set[int], Set[int]]:
+    ) -> tuple[set[int], set[int], set[int]]:
         # This function should be only called on range with min == 0
         assert expr.min == 0
 
@@ -543,22 +543,22 @@ class Trie:
     def add_unit(
         self,
         unit: Expression,
-        nodes: Set[int],
-        search: Set[int],
-        ignore: Set[int],
-        passed: Set[int],
+        nodes: set[int],
+        search: set[int],
+        ignore: set[int],
+        passed: set[int],
         expr_a: TypeA,
         expr_b: TypeB,
-    ) -> Tuple[Set[int], Set[int], Set[int]]:
+    ) -> tuple[set[int], set[int], set[int]]:
         """
         Add one unit into expr_a, expr_b
         """
         passed = set(passed)
 
         # Unit nodes
-        unit_nodes: Set[int] = set()
-        unit_searches: Set[int] = set()
-        unit_passed: Set[int] = set()
+        unit_nodes: set[int] = set()
+        unit_searches: set[int] = set()
+        unit_passed: set[int] = set()
 
         # Iterate over alternations of unit
         for alt in iterate_alternations(
@@ -566,9 +566,9 @@ class Trie:
             iterate_cls=False,
         ):
             # Every alternation start from same nodes, search, passed
-            alt_nodes: Set[int] = set(nodes)
-            alt_search: Set[int] = set(search)
-            alt_passed: Set[int] = set(passed)
+            alt_nodes: set[int] = set(nodes)
+            alt_search: set[int] = set(search)
+            alt_passed: set[int] = set(passed)
 
             # Iterate over concatenations in unit
             for atom in iterate_concatenation(alt):
@@ -600,21 +600,21 @@ class Trie:
         regex: Expression,
         expr_a: TypeA,
         expr_b: TypeB,
-        n_gram: Optional[Literal],
-        n_gram_start: Optional[int],
+        n_gram: Literal | None,
+        n_gram_start: int | None,
     ):
         # Do not pass through these nodes
-        ignore: Set[int] = set()
+        ignore: set[int] = set()
         if n_gram_start:
             ignore.add(n_gram_start)
             ignore.update(subnodes(n_gram_start, expr_a))
 
         # Nodes from which transition in made
-        nodes: Set[int] = {0}
+        nodes: set[int] = {0}
         # Nodes in which is transition searched
-        search: Set[int] = {0}
+        search: set[int] = {0}
         # Nodes which were used
-        passed: Set[int] = {0}
+        passed: set[int] = {0}
 
         # Iterate over concatenation
         for unit in iterate_concatenation(regex, ngram=n_gram):

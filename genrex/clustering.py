@@ -13,7 +13,6 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from statistics import mean
-from typing import Dict, List, Set
 
 from genrex.enums import InputType
 from genrex.logging import logger
@@ -24,7 +23,7 @@ from genrex.misc import filter_ngrams, ready_to_print, string2ngrams
 class Cluster:
     ngram: str = ""
     similars: defaultdict[str, list] = field(default_factory=lambda: defaultdict(list))
-    originals: Set[str] = field(default_factory=set)
+    originals: set[str] = field(default_factory=set)
     input_type: str = ""
     regex: str = ""
     unique: int = 0
@@ -272,9 +271,9 @@ class Corpus:
             string = r"C:\Users\[^\]+" + string[found.span()[1] :]
             return string
 
-        found = re.match("^C:\\\\Documents and Settings\\\\[^\\\\]+", string)
+        found = re.match("^C:\\\\Documents and settings\\\\[^\\\\]+", string)
         if found is not None:
-            string = r"C:\Documents and Settings\[^\]+" + string[found.span()[1] :]
+            string = r"C:\Documents and settings\[^\]+" + string[found.span()[1] :]
             return string
 
         found = re.match(r"^C:\?DOCUMENTS AND SETTINGS\?[^?]+", string)
@@ -320,7 +319,7 @@ class Corpus:
             for sequence in self.unique_ngrams[sample]:
                 self.index[sequence].append(sample)
 
-    def cluster(self) -> List[Cluster]:
+    def cluster(self) -> list[Cluster]:
         """
         The function iterates through the list of samples, and we create the set of samples that
         we found in the same index list.
@@ -360,7 +359,7 @@ class Corpus:
         clusters = self.save_results(scores, ngrams)
         return clusters
 
-    def test_results(self, scores: Dict[str, List[str]], ngrams: Dict[str, str]):
+    def test_results(self, scores: dict[str, list[str]], ngrams: dict[str, str]):
         welp_scores = {}
         welp_ngrams = {}
         for key, cluster in scores.items():
@@ -378,7 +377,7 @@ class Corpus:
         scores.update(welp_scores)  # type: ignore
         ngrams.update(welp_ngrams)  # type: ignore
 
-    def save_results(self, scores: dict, ngrams: dict) -> List[Cluster]:
+    def save_results(self, scores: dict, ngrams: dict) -> list[Cluster]:
         clusters = []
 
         for key, cluster in scores.items():

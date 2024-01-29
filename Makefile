@@ -2,6 +2,8 @@
 		setup \
 		clean \
 		tests \
+		install \
+		dev-install \
 
 help:
 	@echo "Use \`make <target>', where <target> is one of"
@@ -40,5 +42,12 @@ format-check:
 format:
 	@poetry run poe format
 
-tests:
+tests: install
 	@poetry run poe test
+
+install:
+	@poetry update
+	@poetry install
+
+dev-install: install
+	poetry run pre-commit install

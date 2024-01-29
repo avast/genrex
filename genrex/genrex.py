@@ -1,7 +1,5 @@
 import os
 import re
-import sys
-from typing import List, Optional
 
 from genrex.clustering import Cluster, Corpus
 from genrex.logging import logger
@@ -14,7 +12,19 @@ def generate(
     *,
     input_type: str = "",
     **kwargs,
-) -> List[Cluster]:
+) -> list[Cluster]:
+    """
+    Generate function and entrypoint for GenRex.
+    Input:
+        cuckoo_format - optional, bool, default False
+        store_original_strings - optional, bool, default False
+        input_type - optional, default empty
+        input data - two options:
+            source - a dictionary of input
+            directory - a path to directory
+    Output:
+        a list of Clusters
+    """
     data_set: dict = {}
     if "source" in kwargs:
         data_set = kwargs["source"]
@@ -23,9 +33,9 @@ def generate(
         data_set = load_data_dir(kwargs["directory"])
     else:
         logger.error("No source of data was added!")
-        sys.exit(1)
+        raise IOError("No source of data was added!")
 
-    clusters: List[Cluster] = clustering(
+    clusters: list[Cluster] = clustering(
         data_set, cuckoo_format, store_original_strings, input_type
     )
     return generate_regex(clusters)
@@ -34,7 +44,7 @@ def generate(
 def load_data_dir(filepath: str) -> dict:
     data_set: dict = {}
     is_valid_directory(filepath)
-    datafiles: List[str] = os.listdir(filepath)
+    datafiles: list[str] = os.listdir(filepath)
     for datafile in datafiles:
         with open(os.path.join(filepath, datafile), "r", encoding="utf-8") as file:
             data_set[datafile] = [line.strip() for line in file if line.strip()]
@@ -45,7 +55,7 @@ def load_data_dir(filepath: str) -> dict:
 def is_valid_directory(filepath: str):
     if not os.path.exists(filepath):
         logger.error(f"The directory {filepath} does not exist!")
-        sys.exit(1)
+        raise IOError(f"The directory {filepath} does not exist!")
 
 
 def clustering(
@@ -53,16 +63,16 @@ def clustering(
     cuckoo_format: bool,
     store_original_strings: bool,
     input_type: str = "",
-) -> List[Cluster]:
+) -> list[Cluster]:
     corpus: Corpus = Corpus(store_original_strings)
     corpus.add_resource(data, cuckoo_format, input_type=input_type)
-    clusters: List[Cluster] = corpus.cluster()
+    clusters: list[Cluster] = corpus.cluster()
     logger.info(f"Number of created clusters: {str(len(clusters))}")
     return clusters
 
 
-def generate_regex(clusters: List[Cluster]) -> List[Cluster]:
-    results: List[Cluster] = []
+def generate_regex(clusters: list[Cluster]) -> list[Cluster]:
+    results: list[Cluster] = []
     for cluster in clusters:
         logger.info(
             f"Generating regular expression for cluster {list(cluster.similars.values())}"
@@ -75,15 +85,15 @@ def generate_regex(clusters: List[Cluster]) -> List[Cluster]:
     return optimized(results)
 
 
-def duplicate(compare: Cluster, clusters: List[Cluster]) -> Optional[Cluster]:
+def duplicate(compare: Cluster, clusters: list[Cluster]) -> Cluster | None:
     for cluster in clusters:
         if cluster.regex == compare.regex:
             return cluster
     return None
 
 
-def optimized(clusters: List[Cluster]) -> List[Cluster]:
-    results: List[Cluster] = []
+def optimized(clusters: list[Cluster]) -> list[Cluster]:
+    results: list[Cluster] = []
     for cluster in clusters:
         if re.search(r"\(\^\|\\\\\)\.\{.*\}\$$", cluster.regex):
             logger.info(f"Removing too general regular expressions: {cluster.regex}")

@@ -2,7 +2,8 @@ import abc
 import copy
 import string
 import sys
-from typing import Iterable, Iterator, List, Optional, Sequence, Set, Tuple
+from collections.abc import Sequence
+from typing import Iterable, Iterator
 
 from genrex.logging import logger
 from genrex.misc import ready_to_print, string2ngrams
@@ -90,11 +91,11 @@ class Expression(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def return_class_repr(self) -> Optional[ClassType]:
+    def return_class_repr(self) -> ClassType | None:
         pass
 
     @abc.abstractmethod
-    def min_max(self) -> Tuple[int, int]:
+    def min_max(self) -> tuple[int, int]:
         pass
 
     @abc.abstractmethod
@@ -106,14 +107,14 @@ class Expression(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_ngrams(self, ngram_len: int) -> List[str]:
+    def get_ngrams(self, ngram_len: int) -> list[str]:
         pass
 
-    def split(self) -> List["Expression"]:
+    def split(self) -> list["Expression"]:
         return [self]
 
     @classmethod
-    def join(cls, values: List["Expression"]):
+    def join(cls, values: list["Expression"]):
         if not values:
             return Literal("")
         result = values.pop(0)
@@ -189,7 +190,7 @@ class Literal(Expression):
     def alt_len(self) -> int:
         return 1
 
-    def min_max(self) -> Tuple[int, int]:
+    def min_max(self) -> tuple[int, int]:
         return len(self), len(self)
 
     def endswith(self, end: str) -> bool:
@@ -203,13 +204,13 @@ class Literal(Expression):
     def add(self, end: str):
         self.literal = self.literal + end
 
-    def return_class_repr(self) -> Optional[ClassType]:
+    def return_class_repr(self) -> ClassType | None:
         return define_type(self.literal)
 
     def heuristic(self) -> Expression:
         return self
 
-    def get_ngrams(self, ngram_len: int) -> List[str]:
+    def get_ngrams(self, ngram_len: int) -> list[str]:
         return string2ngrams(self.literal, ngram_len)
 
     def contains_meta(self, meta: "Meta") -> bool:
@@ -289,7 +290,7 @@ class Class(Expression):
     def alt_len(self) -> int:
         return 1
 
-    def min_max(self) -> Tuple[int, int]:
+    def min_max(self) -> tuple[int, int]:
         return 1, 1
 
     def endswith(self, end: str) -> bool:
@@ -304,7 +305,7 @@ class Class(Expression):
         else:
             return ord(repr_char[-1])
 
-    def return_class_repr(self) -> Optional[ClassType]:
+    def return_class_repr(self) -> ClassType | None:
         return define_type(repr(self))
 
     def heuristic(self) -> Expression:
@@ -346,8 +347,8 @@ class Class(Expression):
         self.class_set = res
         return self
 
-    def simplify(self) -> List[Expression]:
-        class_set: Set[Expression] = set()
+    def simplify(self) -> list[Expression]:
+        class_set: set[Expression] = set()
         res_type = self.return_class_repr()
         if res_type is not None and res_type != ClassType.GENERAL:
             for class_type in ClassType:
@@ -363,7 +364,7 @@ class Class(Expression):
             self.class_set.remove(end)  # type: ignore #
         return self
 
-    def get_ngrams(self, ngram_len: int) -> List[str]:
+    def get_ngrams(self, ngram_len: int) -> list[str]:
         return []
 
     def contains_meta(self, meta: "Meta") -> bool:
@@ -410,7 +411,7 @@ class Concatenation(Expression):
     def alt_len(self) -> int:
         return self.expr_a.alt_len() + self.expr_b.alt_len() - 1
 
-    def min_max(self) -> Tuple[int, int]:
+    def min_max(self) -> tuple[int, int]:
         min_a, max_a = self.expr_a.min_max()
         min_b, max_b = self.expr_b.min_max()
         return min_a + min_b, max_a + max_b
@@ -424,7 +425,7 @@ class Concatenation(Expression):
             return self.expr_a
         return self
 
-    def return_class_repr(self) -> Optional[ClassType]:
+    def return_class_repr(self) -> ClassType | None:
         if self.expr_a.min_max() == (0, 0):
             return self.expr_b.return_class_repr()
 
@@ -516,7 +517,7 @@ class Concatenation(Expression):
                     self.expr_b = Literal("")
                 return
 
-    def get_ngrams(self, ngram_len: int) -> List[str]:
+    def get_ngrams(self, ngram_len: int) -> list[str]:
         return self.expr_a.get_ngrams(ngram_len) + self.expr_b.get_ngrams(ngram_len)
 
     def get_left(self) -> Expression:
@@ -529,7 +530,7 @@ class Concatenation(Expression):
             return self.expr_b.get_right()
         return self.expr_b
 
-    def split(self) -> List["Expression"]:
+    def split(self) -> list["Expression"]:
         return [*self.expr_a.split(), *self.expr_b.split()]
 
     def contains_meta(self, meta: "Meta") -> bool:
@@ -545,7 +546,7 @@ class Alternation(Expression):
     # Don't create instance of Alternation that contains duplicitous Literals/Meta
 
     def __init__(self, alternations: Iterable[Expression]):
-        self.expr_alternations: List[Expression] = sorted(alternations, key=repr)
+        self.expr_alternations: list[Expression] = sorted(alternations, key=repr)
         self.i = 0
 
     def __eq__(self, other) -> bool:
@@ -615,7 +616,7 @@ class Alternation(Expression):
                 res += alternation.alt_len()
             return res
 
-    def min_max(self) -> Tuple[int, int]:
+    def min_max(self) -> tuple[int, int]:
         if self.expr_alternations is None:
             return 0, 0
         min_res, max_res = self.expr_alternations[0].min_max()
@@ -643,7 +644,7 @@ class Alternation(Expression):
         self.expr_alternations = res
         return self
 
-    def return_class_repr(self) -> Optional[ClassType]:
+    def return_class_repr(self) -> ClassType | None:
         alts = [
             alternation.return_class_repr()
             for alternation in self.expr_alternations
@@ -661,7 +662,7 @@ class Alternation(Expression):
 
         return res
 
-    def get_ngrams(self, ngram_len: int) -> List[str]:
+    def get_ngrams(self, ngram_len: int) -> list[str]:
         return []
 
     def heuristic(self) -> Expression:
@@ -711,7 +712,7 @@ class Alternation(Expression):
                 ]
                 return self
 
-    def analyze(self, alternations_sorted) -> Tuple[int, int, bool, bool]:
+    def analyze(self, alternations_sorted) -> tuple[int, int, bool, bool]:
         maybe = False
         one = False
         min_res = sys.maxsize
@@ -778,15 +779,15 @@ class Meta(Expression):
     def heuristic(self) -> Expression:
         return self
 
-    def get_ngrams(self, ngram_len: int) -> List[str]:
+    def get_ngrams(self, ngram_len: int) -> list[str]:
         return []
 
-    def return_class_repr(self) -> Optional[ClassType]:
+    def return_class_repr(self) -> ClassType | None:
         if self.meta == ".":
             return ClassType.GENERAL
         return None
 
-    def min_max(self) -> Tuple[int, int]:
+    def min_max(self) -> tuple[int, int]:
         return 1, 1
 
     def alt_len(self) -> int:
@@ -885,7 +886,7 @@ class Range(Expression):
         expr = self.expr.heuristic()
         return Range(expr, self.min, self.max)
 
-    def get_ngrams(self, ngram_len: int) -> List[str]:
+    def get_ngrams(self, ngram_len: int) -> list[str]:
         if self.min == 0:
             return []
         elif self.min == 1:
@@ -900,10 +901,10 @@ class Range(Expression):
 
         return []
 
-    def return_class_repr(self) -> Optional[ClassType]:
+    def return_class_repr(self) -> ClassType | None:
         return self.expr.return_class_repr()
 
-    def min_max(self) -> Tuple[int, int]:
+    def min_max(self) -> tuple[int, int]:
         expr_mn, expr_mx = self.expr.min_max()
         return expr_mn * self.min, expr_mx * self.max
 
@@ -924,11 +925,11 @@ class Range(Expression):
         return Literal(".*")
 
 
-def get_cls_type(cls_type: ClassType) -> List[Expression]:
+def get_cls_type(cls_type: ClassType) -> list[Expression]:
     """Create cls type representation used in heuristic"""
     if cls_type & ClassType.GENERAL:
         return [Literal(x) for x in class_types_array[ClassType.GENERAL]]
-    result: Set[Literal] = set()
+    result: set[Literal] = set()
     for i in ClassType:
         if i & cls_type:
             result.update(Literal(x) for x in class_types_array[i])
@@ -940,7 +941,7 @@ def create_type(cls_type: ClassType) -> Expression:  # noqa: C901
     if cls_type == ClassType.GENERAL:
         return Meta(".")
 
-    cls_set: Set[Expression] = set()
+    cls_set: set[Expression] = set()
     if cls_type & ClassType.SPACE:
         cls_set.update(Literal(x) for x in string.whitespace)
     if cls_type & ClassType.NUMBERS:
