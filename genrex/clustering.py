@@ -8,6 +8,7 @@ the set of samples that we found in the same index list.
 Every sample is added to the cluster only once.
 Results are in class Cluster.
 """
+
 import ntpath
 import re
 from collections import defaultdict
@@ -202,11 +203,13 @@ class Corpus:
         string = string.replace(r"\\", "\\")
         string = re.sub(
             r"\\x[a-fA-F0-9]{2}",
-            lambda x: x.group(0)
-            if (x.group(0) == r"\x64" or x.group(0) == r"\x86")
-            and x.end() + 1 < len(string)
-            and string[x.end() + 1] != "x"
-            else x.group(0).encode("latin1").decode("unicode_escape"),
+            lambda x: (
+                x.group(0)
+                if (x.group(0) == r"\x64" or x.group(0) == r"\x86")
+                and x.end() + 1 < len(string)
+                and string[x.end() + 1] != "x"
+                else x.group(0).encode("latin1").decode("unicode_escape")
+            ),
             string,
         )
         return string

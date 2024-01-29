@@ -1,6 +1,7 @@
 """
 Tests regex algorithm with heuristics
 """
+
 import unittest
 
 from genrex.classes import Concatenation, Meta, Range
