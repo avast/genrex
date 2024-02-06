@@ -169,7 +169,7 @@ class Corpus:
                 r"/|\^|\\|\?|!|\+|&|=|\.", ngram_string
             )
 
-        splited = [len(l) for k in splited_list.values() for l in k]
+        splited = [len(substr) for k in splited_list.values() for substr in k]
         if len(splited) == 0:
             logger.info("No input data after filtering. Exiting.")
             return

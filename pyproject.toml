@@ -27,6 +27,8 @@ pytest-pylint = "^0.21.0"
 pylint = "^3.0.3"
 types-requests = ">=0.1.8,<3.0.0"
 types-tabulate = ">=0.1.0,<0.9.1"
+ruff = "^0.2.1"
+pytest-ruff = "^0.2.1"
 
 [tool.poe.tasks]
 _black = "black genrex/ tests/"
@@ -35,7 +37,7 @@ _black_check = "black --check genrex/ tests/"
 _isort_check = "isort --check genrex/ tests/"
 format = ["_isort", "_black"]
 format-check = ["_isort_check", "_black_check"]
-test = "pytest -vvv --mypy --black --pylint --pylint-rcfile=pyproject.toml --cov=genrex --cov-report=term-missing -l genrex/ tests/"
+test = "pytest -vvv --mypy --ruff --pylint --pylint-rcfile=pyproject.toml --cov=genrex --cov-report=term-missing -l genrex/ tests/"
 
 
 [tool.isort]
