@@ -274,9 +274,9 @@ class Corpus:
             string = r"C:\Users\[^\]+" + string[found.span()[1] :]
             return string
 
-        found = re.match("^C:\\\\Documents and settings\\\\[^\\\\]+", string)
+        found = re.match("^C:\\\\Documents and Settings\\\\[^\\\\]+", string)
         if found is not None:
-            string = r"C:\Documents and settings\[^\]+" + string[found.span()[1] :]
+            string = r"C:\Documents and Settings\[^\]+" + string[found.span()[1] :]
             return string
 
         found = re.match(r"^C:\?DOCUMENTS AND SETTINGS\?[^?]+", string)
