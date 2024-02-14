@@ -131,6 +131,6 @@ make tests
 
 ## License
 
-Copyright (c) 2023 Avast Software, licensed under the MIT license. See the
+Copyright (c) 2024 Avast Software, licensed under the MIT license. See the
 [`LICENSE`](https://github.com/avast/genrex/blob/master/LICENSE) file for more
 details.
