@@ -666,16 +666,17 @@ tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
 
 [[package]]
 name = "pytest-ruff"
-version = "0.2.1"
+version = "0.3"
 description = "pytest plugin to check ruff requirements."
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = ">=3.8,<4.0"
 files = [
-    {file = "pytest_ruff-0.2.1-py3-none-any.whl", hash = "sha256:f586bbd7978cb5782b673c8e55fa069d83430139931b918bd72232ba3f71eb67"},
-    {file = "pytest_ruff-0.2.1.tar.gz", hash = "sha256:078ad696bfa347b466991ed4f9cc5ec807f5a171d7f06091660d8f16ba03a5dc"},
+    {file = "pytest_ruff-0.3-py3-none-any.whl", hash = "sha256:625d142fa65855cd2d6edae395287829eea91a951d2b77cbe824463680b35760"},
+    {file = "pytest_ruff-0.3.tar.gz", hash = "sha256:798fafcee34dff6055c9082b394a5f314d6db2a562fb560da29cfe4e1996eb77"},
 ]
 
 [package.dependencies]
+pytest = ">=5"
 ruff = ">=0.0.242"
 
 [[package]]
@@ -844,4 +845,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "9737baec6a6792f6ac6eb9d9a1c34fe0c2e48358e732c18c64ae762f08bfdd24"
+content-hash = "6d465a46544b7f5a6334bf4ee7fabe95701fba825ab1bad5da6f1ee5b32c6299"

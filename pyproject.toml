@@ -32,7 +32,7 @@ pylint = "^3.1.0"
 types-requests = ">=0.1.8,<3.0.0"
 types-tabulate = ">=0.1.0,<0.9.1"
 ruff = "^0.3.0"
-pytest-ruff = "^0.2.1"
+pytest-ruff = "^0.3"
 
 [tool.poe.tasks]
 _black = "black genrex/ tests/"
