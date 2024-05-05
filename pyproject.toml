@@ -16,7 +16,7 @@ packages = [
 python = "^3.10"
 
 [tool.poetry.dev-dependencies]
-black = "^24.4.0"
+black = "^24.4.2"
 isort = "^5.10.1"
 mypy = "^1.10.0"
 poethepoet = "^0.25.1"
