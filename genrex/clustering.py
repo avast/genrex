@@ -13,7 +13,7 @@ import ntpath
 import re
 from collections import defaultdict
 from dataclasses import dataclass, field
-from statistics import mean
+from statistics import mean, median
 
 from genrex.enums import InputType
 from genrex.logging import logger
@@ -139,15 +139,6 @@ class Corpus:
 
         self.extract_ngrams(self.input_type)
 
-    def estimate_len_of_ngram(self):
-        if len(self.samples) == 0:
-            logger.info("No input data after filtering. Exiting.")
-            return
-        self.ngrams = sum(map(len, self.samples)) // (2 * len(self.samples))
-        if len(self.samples) < 10:
-            self.ngrams = self.ngrams // 2
-        self.ngrams = max(self.ngrams, self.min_ngram)
-
     def filter_short_strings(self):
         self.samples = dict(
             filter(lambda x: (len(x[0]) >= self.ngrams), self.samples.items())
@@ -165,8 +156,8 @@ class Corpus:
             if len(ngram_string) < self.min_ngram:
                 continue
 
-            splited_list[prep_string] = re.split(
-                r"/|\^|\\|\?|!|\+|&|=|\.", ngram_string
+            splited_list[prep_string] = list(
+                filter(None, re.split(r"/|\^|\\|\?|!| |,|\+|&|=", ngram_string))
             )
 
         splited = [len(substr) for k in splited_list.values() for substr in k]
@@ -174,14 +165,14 @@ class Corpus:
             logger.info("No input data after filtering. Exiting.")
             return
 
-        self.ngrams = sum(splited) // (len(splited))
-        self.ngrams = self.ngrams // 2
-        self.ngrams = max(self.ngrams, self.min_ngram)
-        if input_type in [
+        self.ngrams = int((median(splited) + mean(splited)) // 2)
+        if input_type not in [
             InputType.FILE_ACCESS,
             InputType.KEY_ACCESS,
         ]:
-            self.ngrams = self.ngrams * 4
+            self.ngrams = self.ngrams // 2
+
+        self.ngrams = max(self.ngrams, self.min_ngram)
 
         for key, value in splited_list.items():
             for part in value:
@@ -358,11 +349,18 @@ class Corpus:
                         ngrams[sample] = sequence
                     seen.add(match)
 
-        self.test_results(scores, ngrams)
+        self.split_general_clusters(scores, ngrams)
         clusters = self.save_results(scores, ngrams)
         return clusters
 
-    def test_results(self, scores: dict[str, list[str]], ngrams: dict[str, str]):
+    def split_general_clusters(
+        self, scores: dict[str, list[str]], ngrams: dict[str, str]
+    ):
+        """
+        Split clusters if the lenght of the strings are too different,
+        creating too general regular expressions.
+        This leads to more clusters with the same n-gram.
+        """
         welp_scores = {}
         welp_ngrams = {}
         for key, cluster in scores.items():

@@ -143,8 +143,8 @@ class ClusteringTests(unittest.TestCase):
                 "ARRANGEMEN",
             ]
         }
-        cluster_l = 3
-        res_l = [1, 1, 1]
+        cluster_l = 4
+        res_l = [1, 1, 1, 1]
         res = [
             defaultdict(
                 list,
@@ -152,11 +152,16 @@ class ClusteringTests(unittest.TestCase):
                     "sample1": [
                         "ARRANGEMENT",
                         "ARRAGEMENT",
-                        "ARRAGMENT",
-                        "ARRANCEMENT",
+                        "ARRANGEMEN",
+                    ]
+                },
+            ),
+            defaultdict(
+                list,
+                {
+                    "sample1": [
                         "ARRANGEME",
                         "ARRANGEMEMT",
-                        "ARRANGEMEN",
                     ]
                 },
             ),
@@ -166,7 +171,6 @@ class ClusteringTests(unittest.TestCase):
                     "sample1": [
                         "SPECC",
                         "SPECCN",
-                        "SPECEN",
                     ]
                 },
             ),
@@ -182,10 +186,11 @@ class ClusteringTests(unittest.TestCase):
                 },
             ),
         ]
-        res_ngram = ["ARRA", "SPEC", "SPEC"]
+        res_ngram = ["GEMEN", "ARRAN", "SPECC", "CATIO"]
         res_stats = [
-            {"unique": 7, "max": 7, "min": 7, "average": 7.0},
             {"unique": 3, "max": 3, "min": 3, "average": 3.0},
+            {"unique": 2, "max": 2, "min": 2, "average": 2.0},
+            {"unique": 2, "max": 2, "min": 2, "average": 2.0},
             {"unique": 4, "max": 4, "min": 4, "average": 4.0},
         ]
         cuckoo_format = False
