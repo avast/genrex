@@ -6,6 +6,25 @@ from genrex.logging import logger
 from genrex.regex import Regex
 
 
+def log_large_dict(data_dict):
+    """Logs a dictionary with limited keys and values."""
+    max_keys = 3
+    max_values = 3
+    # Limit the number of keys to log
+    limited_keys = list(data_dict.keys())[:max_keys]
+
+    # Create a message string to log
+    message = "{"
+    for i, key in enumerate(limited_keys):
+        # Limit the number of values to log per key
+        limited_values = list(data_dict[key])[:max_values]
+        message += f"{key}: {', '.join(map(str, limited_values))}"
+        if i < len(limited_keys) - 1:
+            message += ", "
+    message += "}"
+    return message
+
+
 def generate(
     cuckoo_format: bool = False,
     store_original_strings: bool = False,
@@ -28,7 +47,7 @@ def generate(
     data_set: dict = {}
     if "source" in kwargs:
         data_set = kwargs["source"]
-        logger.info(f"Adding source data: {data_set}")
+        logger.info(f"Adding source data (shortened): {log_large_dict(data_set)}")
     elif "directory" in kwargs:
         data_set = load_data_dir(kwargs["directory"])
     else:
@@ -48,7 +67,7 @@ def load_data_dir(filepath: str) -> dict:
     for datafile in datafiles:
         with open(os.path.join(filepath, datafile), "r", encoding="utf-8") as file:
             data_set[datafile] = [line.strip() for line in file if line.strip()]
-    logger.info(f"Adding directory data: {data_set}")
+    logger.info(f"Adding directory data (shortened): {log_large_dict(data_set)}")
     return data_set
 
 
@@ -75,7 +94,7 @@ def generate_regex(clusters: list[Cluster]) -> list[Cluster]:
     results: list[Cluster] = []
     for cluster in clusters:
         logger.info(
-            f"Generating regular expression for cluster {list(cluster.similars.values())}"
+            f"Generating regular expression for cluster {list(cluster.similars.values())[:5]} (shortened)"
         )
         regex: Regex = Regex()
         regex.make_regex(cluster)

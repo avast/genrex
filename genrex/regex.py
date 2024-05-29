@@ -199,13 +199,13 @@ def convert_to_range(expr_a: Expression, expr_b: Expression) -> Expression | Non
 
 
 class State:
-    def __init__(self):
-        self.accept = False
-        self.transitions = {}
+    def __init__(self) -> None:
+        self.accept: bool = False
+        self.transitions: dict = {}
 
 
 class Trie:
-    def __init__(self):
+    def __init__(self) -> None:
         self.root: State = State()
         self.nodes: list[State] = []
         self.ngram_start: int | None = None
@@ -699,7 +699,7 @@ patterns: dict = {
     "GENREXGUIDBRACKET": (
         r"\{[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}\}"
     ),
-    "GENREXGUID": r"[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}",
+    "GENREXSIMPLEGUID": r"[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}",
     "GENREXHEX8": r"[0-9A-Fa-f]{8}:[0-9A-Fa-f]:[0-9A-Fa-f]{8}:[0-9A-Fa-f]{8}:[0-9A-Fa-f]{8}",
     "GENREXURL": r"[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}",
     "GENREXTHEX": r"[0-9a-f]{3}\.[0-9a-f]{3}\.[0-9a-f]{3}",
@@ -709,12 +709,12 @@ patterns: dict = {
 
 
 class Regex:
-    def __init__(self):
-        self.regexps = ""
-        self.found_patterns = set()
-        self.dot_array = set()
-        self.prefix = False
-        self.suffix = False
+    def __init__(self) -> None:
+        self.regexps: Expression = Literal("")
+        self.found_patterns: set = set()
+        self.dot_array: set = set()
+        self.prefix: bool = False
+        self.suffix: bool = False
 
     def get_regexps(self):
         return self.regexps

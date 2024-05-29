@@ -16,12 +16,10 @@ packages = [
 python = "^3.10"
 
 [tool.poetry.dev-dependencies]
-black = "^24.4.2"
 isort = "^5.10.1"
 mypy = "^1.10.0"
 poethepoet = "^0.26.1"
 pytest = "^8.2.1"
-pytest-black = "^0.3.12"
 pytest-isort = "^4.0.0"
 pytest-cov = "^5.0.0"
 pytest-mock = "^3.14.0"
@@ -35,12 +33,12 @@ ruff = "^0.4.5"
 pytest-ruff = "^0.3"
 
 [tool.poe.tasks]
-_black = "black genrex/ tests/"
+_ruff = "ruff format genrex/ tests/"
 _isort = "isort genrex/ tests/"
-_black_check = "black --check genrex/ tests/"
+_ruff_check = "ruff check genrex/ tests/"
 _isort_check = "isort --check genrex/ tests/"
-format = ["_isort", "_black"]
-format-check = ["_isort_check", "_black_check"]
+format = ["_isort", "_ruff"]
+format-check = ["_isort_check", "_ruff_check"]
 test = "pytest -vvv --mypy --ruff --pylint --pylint-rcfile=pyproject.toml --cov=genrex --cov-report=term-missing -l genrex/ tests/"
 
 
