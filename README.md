@@ -12,10 +12,10 @@ For citing, please use the following entry for the [original paper](TBD):
 ```
 @misc{genrex-2023,
   doi = {10.1109/TrustCom60117.2023.00123},
-  url = {...},
+  url = {https://ieeexplore.ieee.org/document/10538538},
   author = {Regeciova, Dominika and Kolar, Dusan},
   title = {GenRex: Leveraging Regular Expressions for Dynamic Malware Detection},
-  publisher = {IEEE},
+  publisher = {2023 IEEE 22nd International Conference on Trust, Security and Privacy in Computing and Communications (TrustCom)},
   year = {2023}
 }
 ```
