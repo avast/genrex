@@ -8,7 +8,7 @@ For more information, check out:
 - [Wiki](https://www.github.com/avast/genrex/wiki)
 
 ## Citation 
-For citing, please use the following entry for the [original paper](TBD):
+For citing, please use the following entry for the [original paper](https://ieeexplore.ieee.org/document/10538538):
 ```
 @misc{genrex-2023,
   doi = {10.1109/TrustCom60117.2023.00123},
