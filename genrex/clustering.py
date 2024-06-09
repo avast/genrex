@@ -15,7 +15,6 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from statistics import mean, median
 
-from genrex.enums import InputType
 from genrex.logging import logger
 from genrex.misc import filter_ngrams, ready_to_print, string2ngrams
 
@@ -137,14 +136,14 @@ class Corpus:
 
                 self.add(string, prep_string, source)
 
-        self.extract_ngrams(self.input_type)
+        self.extract_ngrams()
 
     def filter_short_strings(self):
         self.samples = dict(
             filter(lambda x: (len(x[0]) >= self.ngrams), self.samples.items())
         )
 
-    def extract_ngrams(self, input_type):
+    def extract_ngrams(self):
         splited_list = {}
         for prep_string in self.samples:
             self.unique_ngrams[prep_string] = []
@@ -166,11 +165,8 @@ class Corpus:
             return
 
         self.ngrams = int((median(splited) + mean(splited)) // 2)
-        if input_type not in [
-            InputType.FILE_ACCESS,
-            InputType.KEY_ACCESS,
-        ]:
-            self.ngrams = self.ngrams // 2
+
+        self.ngrams = self.ngrams // 2
 
         self.ngrams = max(self.ngrams, self.min_ngram)
 
