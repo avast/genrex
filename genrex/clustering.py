@@ -104,6 +104,7 @@ class Corpus:
         self.unique_ngrams: dict = defaultdict(dict)
         self.index: dict = defaultdict(dict)
         self.min_ngram = 4
+        self.max_ngram = 270
         self.input_type: str = ""
 
     def add_resource(
@@ -119,8 +120,12 @@ class Corpus:
         self.input_type = input_type
         for source, strings in data.items():
             for string in strings:
-                if len(string) < self.min_ngram:
+                check_len = len(string)
+                if check_len < self.min_ngram:
                     logger.warning(f"String {string} is too short")
+                    continue
+                elif check_len > self.max_ngram:
+                    logger.warning(f"String {string} is too long")
                     continue
 
                 prep_string = string
