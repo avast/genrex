@@ -52,7 +52,8 @@ find_keywords = [
     "genrexsimpleguid",
     "genrexthex",
     "genrexhex8",
-    "genrexexem",
+    "genrexurl",
+    "genrexphone",
 ]
 
 

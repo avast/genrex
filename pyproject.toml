@@ -64,7 +64,8 @@ disable = [
     "too-many-nested-blocks",
     "too-many-branches",
     "too-many-locals",
-    "too-many-function-args"
+    "too-many-function-args",
+    "too-many-instance-attributes"
 ]
 
 [build-system]
