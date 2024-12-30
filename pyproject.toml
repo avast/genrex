@@ -18,7 +18,7 @@ python = "^3.10"
 [tool.poetry.dev-dependencies]
 isort = "^5.10.1"
 mypy = "^1.14.0"
-poethepoet = "^0.31.1"
+poethepoet = "^0.32.0"
 pytest = "^8.3.3"
 pytest-isort = "^4.0.0"
 pytest-cov = "^6.0.0"
